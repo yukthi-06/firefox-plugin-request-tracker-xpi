@@ -28,6 +28,8 @@ let filterResourceType = 'all';
 let filterStatus = 'all';
 let autoScroll = true;
 
+let trackingActive = true;
+
 // UI Initialization
 document.addEventListener('DOMContentLoaded', () => {
   // Bind UI Controls
@@ -37,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('filter-status').addEventListener('change', handleFilterChange);
   document.getElementById('auto-scroll-check').addEventListener('change', handleAutoScrollChange);
   
+  document.getElementById('toggle-capture-btn').addEventListener('click', handleToggleCapture);
   document.getElementById('clear-btn').addEventListener('click', handleClearLogs);
   document.getElementById('export-csv-btn').addEventListener('click', exportCSV);
   document.getElementById('export-txt-btn').addEventListener('click', exportTXT);
@@ -50,21 +53,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load Existing Logs from Background Script
   browser.runtime.sendMessage({ action: "getLogs" }).then((response) => {
-    if (response && Array.isArray(response.logs)) {
-      allLogs = response.logs;
-      // Sort newest first
-      allLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      recalculateStats();
-      applyFilters();
-      
-      if (autoScroll) {
-        scrollContainer.scrollTop = 0;
+    if (response) {
+      if (Array.isArray(response.logs)) {
+        allLogs = response.logs;
+        // Sort newest first
+        allLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        recalculateStats();
+        applyFilters();
+        
+        if (autoScroll) {
+          scrollContainer.scrollTop = 0;
+        }
+      }
+      if (response.trackingActive !== undefined) {
+        trackingActive = response.trackingActive;
+        updateTrackingStateUI();
       }
     }
   }).catch((err) => {
     console.error("Error fetching initial logs from background:", err);
   });
 });
+
+function handleToggleCapture() {
+  browser.runtime.sendMessage({ action: "toggleTracking" }).then((response) => {
+    if (response && response.trackingActive !== undefined) {
+      trackingActive = response.trackingActive;
+      updateTrackingStateUI();
+    }
+  }).catch((err) => {
+    console.error("Error toggling tracking:", err);
+  });
+}
+
+function updateTrackingStateUI() {
+  const btn = document.getElementById('toggle-capture-btn');
+  const indicator = document.querySelector('.pulse-indicator');
+  
+  if (trackingActive) {
+    btn.textContent = 'Stop Capture';
+    btn.className = 'btn btn-secondary';
+    indicator.classList.remove('inactive');
+  } else {
+    btn.textContent = 'Start Capture';
+    btn.className = 'btn btn-primary';
+    indicator.classList.add('inactive');
+  }
+}
 
 // Real-time Event Receiver
 browser.runtime.onMessage.addListener((message) => {

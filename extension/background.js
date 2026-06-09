@@ -254,7 +254,12 @@ browser.webRequest.onErrorOccurred.addListener(
 // 4. Port/Message Handlers
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "getLogs") {
-    sendResponse({ logs: logs });
+    sendResponse({ logs: logs, trackingActive: trackingActive });
+  } else if (message.action === "toggleTracking") {
+    trackingActive = !trackingActive;
+    browser.storage.local.set({ trackingActive: trackingActive });
+    sendResponse({ trackingActive: trackingActive });
+    return true; // Keep channel open
   } else if (message.action === "clearLogs") {
     logs = [];
     browser.storage.local.set({ sessionLogs: [] }).then(() => {
