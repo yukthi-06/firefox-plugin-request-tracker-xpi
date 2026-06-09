@@ -95,6 +95,9 @@ browser.runtime.onStartup.addListener(() => {
 browser.windows.onRemoved.addListener((windowId) => {
   if (windowId === loggerWindowId) {
     loggerWindowId = null;
+    trackingActive = false;
+    browser.storage.local.set({ trackingActive: false });
+    console.log("Logger window closed. Tracking deactivated.");
   }
 });
 
@@ -115,7 +118,7 @@ browser.tabs.onRemoved.addListener((tabId) => {
   delete tabUrls[tabId];
 });
 
-// Add a log entry and handle sending to logger window or reopening
+// Add a log entry and handle sending to logger window
 function addLogEntry(entry) {
   logs.push(entry);
   scheduleSave();
@@ -125,9 +128,6 @@ function addLogEntry(entry) {
     browser.runtime.sendMessage({ action: "newLog", data: entry }).catch((err) => {
       // Ignored: window might be loading or in process of closing
     });
-  } else {
-    // If closed, reopen on next logged event
-    createLoggerWindow();
   }
 }
 
