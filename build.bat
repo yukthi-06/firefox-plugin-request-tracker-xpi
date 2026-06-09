@@ -11,7 +11,7 @@ echo Packaging WebExtension from 'extension' directory into %OUTPUT_FILE% using 
 
 :: Change directory to extension to ensure paths are at root of archive
 cd extension
-zip -r -q "..\%OUTPUT_FILE%" *
+zip -r -q "..\output_xpi\%OUTPUT_FILE%" *
 cd ..
 
 if exist "%OUTPUT_FILE%" (
