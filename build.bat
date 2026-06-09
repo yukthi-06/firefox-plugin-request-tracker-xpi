@@ -1,19 +1,17 @@
 @echo off
 :: CMD Build Script for Session Resource Logger XPI using zip.exe
-:: Compresses the contents of the 'extension' directory into 'session-resource-logger.xpi'
+:: Compresses the contents of the 'extension' directory into 'session-resource-logger_yyyyMMdd.hhmmss.xpi'
 
-set "OUTPUT_FILE=session-resource-logger.xpi"
+:: Fetch timestamp in yyyyMMdd.hhmmss format reliably
+for /f "usebackq" %%i in (`powershell -NoProfile -Command "Get-Date -Format 'yyyyMMdd.HHmmss'"`) do set "TS=%%i"
 
-if exist "%OUTPUT_FILE%" (
-    echo Cleaning up old XPI file...
-    del "%OUTPUT_FILE%"
-)
+set "OUTPUT_FILE=session-resource-logger_%TS%.xpi"
 
-echo Packaging WebExtension from 'extension' directory using zip.exe...
+echo Packaging WebExtension from 'extension' directory into %OUTPUT_FILE% using zip.exe...
 
 :: Change directory to extension to ensure paths are at root of archive
 cd extension
-zip -r "..\%OUTPUT_FILE%" *
+zip -r -q "..\%OUTPUT_FILE%" *
 cd ..
 
 if exist "%OUTPUT_FILE%" (
