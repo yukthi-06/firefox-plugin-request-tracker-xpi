@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Session Resource Logger</title>
+  <link rel="stylesheet" href="logger.css">
+</head>
+<body class="dark-theme">
+
+  <!-- Header Section -->
+  <header class="app-header">
+    <div class="header-main">
+      <div class="logo-area">
+        <div class="pulse-indicator"></div>
+        <h1>Session Resource Logger</h1>
+      </div>
+      <div class="header-actions">
+        <button id="clear-btn" class="btn btn-danger">Clear Session</button>
+      </div>
+    </div>
+
+    <!-- Statistics Panel -->
+    <div class="stats-panel">
+      <div class="stat-card" data-stat="pages">
+        <div class="stat-value" id="stat-pages">0</div>
+        <div class="stat-label">Pages Visited</div>
+      </div>
+      <div class="stat-card" data-stat="resources">
+        <div class="stat-value" id="stat-resources">0</div>
+        <div class="stat-label">Total Resources</div>
+      </div>
+      <div class="stat-card" data-stat="size">
+        <div class="stat-value" id="stat-size">0 B</div>
+        <div class="stat-label">Transferred Size</div>
+      </div>
+      <div class="stat-card" data-stat="images">
+        <div class="stat-value" id="stat-images">0</div>
+        <div class="stat-label">Images</div>
+      </div>
+      <div class="stat-card" data-stat="scripts">
+        <div class="stat-value" id="stat-scripts">0</div>
+        <div class="stat-label">Scripts</div>
+      </div>
+      <div class="stat-card" data-stat="css">
+        <div class="stat-value" id="stat-css">0</div>
+        <div class="stat-label">CSS Files</div>
+      </div>
+      <div class="stat-card" data-stat="audio">
+        <div class="stat-value" id="stat-audio">0</div>
+        <div class="stat-label">Audio Files</div>
+      </div>
+      <div class="stat-card text-error" data-stat="failed">
+        <div class="stat-value" id="stat-failed">0</div>
+        <div class="stat-label">Failed Requests</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filter & Controls Toolbar -->
+  <section class="toolbar">
+    <div class="search-wrapper">
+      <input type="text" id="search-input" placeholder="Search page URL, resource URL, or domain..." autocomplete="off">
+    </div>
+
+    <div class="filters-container">
+      <div class="filter-group">
+        <label for="filter-event-type">Event Type</label>
+        <select id="filter-event-type">
+          <option value="all">All Events</option>
+          <option value="page">Page Visits</option>
+          <option value="resource">Resources</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-resource-type">Resource Type</label>
+        <select id="filter-resource-type">
+          <option value="all">All Resources</option>
+          <option value="image">Image</option>
+          <option value="script">Script</option>
+          <option value="stylesheet">Stylesheet</option>
+          <option value="font">Font</option>
+          <option value="audio">Audio</option>
+          <option value="video">Video</option>
+          <option value="xmlhttprequest">XHR</option>
+          <option value="fetch">Fetch (ping/other)</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-status">Status Code</label>
+        <select id="filter-status">
+          <option value="all">All Statuses</option>
+          <option value="200">200 OK</option>
+          <option value="success">2xx Success</option>
+          <option value="redirect">3xx Redirect</option>
+          <option value="client-error">4xx Client Error</option>
+          <option value="server-error">5xx Server Error</option>
+          <option value="failed">Failed / Network Error</option>
+        </select>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-switch">
+          <input type="checkbox" id="auto-scroll-check" checked>
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Auto-scroll to Newest</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Event Table Area -->
+  <main class="table-container">
+    <div class="resizable-table-wrapper">
+      <table class="event-table" id="event-table">
+        <thead>
+          <tr>
+            <th class="col-timestamp" data-col="timestamp">Timestamp</th>
+            <th class="col-type" data-col="type">Type</th>
+            <th class="col-page" data-col="page">Page URL</th>
+            <th class="col-resource" data-col="resource">Resource URL</th>
+            <th class="col-restype" data-col="restype">Res. Type</th>
+            <th class="col-status" data-col="status">Status</th>
+            <th class="col-size" data-col="size">Size</th>
+            <th class="col-mime" data-col="mime">MIME Type</th>
+            <th class="col-domain" data-col="domain">Domain</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- Dynamically populated rows -->
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Empty state message -->
+    <div id="empty-state" class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3>No log entries matched your criteria</h3>
+      <p>Start browsing or adjust filters to view recorded activities.</p>
+    </div>
+  </main>
+
+  <!-- Footer Export Bar -->
+  <footer class="app-footer">
+    <div class="footer-left">
+      <span id="record-count">0 items loaded</span>
+    </div>
+    <div class="footer-right">
+      <button id="export-csv-btn" class="btn btn-primary">Export All Data (CSV)</button>
+      <button id="export-txt-btn" class="btn btn-secondary">Export URLs Only (TXT)</button>
+    </div>
+  </footer>
+
+  <script src="logger.js"></script>
+</body>
+</html>

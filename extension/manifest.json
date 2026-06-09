@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Session Resource Logger",
+  "version": "1.0.0",
+  "description": "Continuously records page visits and network resources loaded during the browser session.",
+  "permissions": [
+    "webRequest",
+    "webNavigation",
+    "tabs",
+    "storage",
+    "downloads"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "action": {
+    "default_title": "Session Resource Logger",
+    "default_icon": "icons/icon.svg"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "session-resource-logger@yukthi-06.github.io",
+      "strict_min_version": "109.0"
+    }
+  }
+}
