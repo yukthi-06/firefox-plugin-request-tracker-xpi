@@ -43,6 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('clear-btn').addEventListener('click', handleClearLogs);
   document.getElementById('export-csv-btn').addEventListener('click', exportCSV);
   document.getElementById('export-txt-btn').addEventListener('click', exportTXT);
+  document.getElementById('copy-all-csv-btn').addEventListener('click', copyAllCSV);
+  document.getElementById('copy-all-txt-btn').addEventListener('click', copyAllTXT);
+  document.getElementById('copy-filtered-csv-btn').addEventListener('click', copyFilteredCSV);
+  document.getElementById('copy-filtered-txt-btn').addEventListener('click', copyFilteredTXT);
 
   // Scroll Container listener for virtual table
   scrollContainer.addEventListener('scroll', renderTable);
@@ -423,17 +427,12 @@ function getTimestampFilename() {
   return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
 }
 
-function exportCSV() {
-  if (allLogs.length === 0) {
-    alert("No data available to export.");
-    return;
-  }
-
+function generateCSVString(logs) {
   const csvRows = [
     ['timestamp', 'eventType', 'pageUrl', 'resourceUrl', 'resourceType', 'statusCode', 'fileSize', 'mimeType', 'domain', 'tabId']
   ];
   
-  for (const log of allLogs) {
+  for (const log of logs) {
     const pageUrlVal = log.pageUrl || log.url || '';
     const resUrlVal = log.type === 'page' ? '' : (log.resourceUrl || '');
     csvRows.push([
@@ -450,10 +449,30 @@ function exportCSV() {
     ]);
   }
   
-  const csvContent = csvRows.map(row => 
+  return csvRows.map(row => 
     row.map(val => `"${String(val !== undefined && val !== null ? val : '').replace(/"/g, '""')}"`).join(",")
   ).join("\n");
-  
+}
+
+function generateTXTString(logs) {
+  const urlSet = new Set();
+  for (const log of logs) {
+    if (log.type === 'page') {
+      if (log.url) urlSet.add(log.url);
+    } else {
+      if (log.resourceUrl) urlSet.add(log.resourceUrl);
+    }
+  }
+  return Array.from(urlSet).join("\n");
+}
+
+function exportCSV() {
+  if (allLogs.length === 0) {
+    alert("No data available to export.");
+    return;
+  }
+
+  const csvContent = generateCSVString(allLogs);
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   
@@ -471,16 +490,7 @@ function exportTXT() {
     return;
   }
 
-  const urlSet = new Set();
-  for (const log of allLogs) {
-    if (log.type === 'page') {
-      if (log.url) urlSet.add(log.url);
-    } else {
-      if (log.resourceUrl) urlSet.add(log.resourceUrl);
-    }
-  }
-  
-  const txtContent = Array.from(urlSet).join("\n");
+  const txtContent = generateTXTString(allLogs);
   const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   
@@ -490,6 +500,51 @@ function exportTXT() {
     filename: filename,
     saveAs: true
   });
+}
+
+function copyToClipboard(text, successMessage) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert(successMessage);
+  }).catch((err) => {
+    console.error("Clipboard copy failed: ", err);
+    alert("Failed to copy to clipboard.");
+  });
+}
+
+function copyAllCSV() {
+  if (allLogs.length === 0) {
+    alert("No data available to copy.");
+    return;
+  }
+  const csvContent = generateCSVString(allLogs);
+  copyToClipboard(csvContent, "All data (CSV) copied to clipboard!");
+}
+
+function copyAllTXT() {
+  if (allLogs.length === 0) {
+    alert("No URLs available to copy.");
+    return;
+  }
+  const txtContent = generateTXTString(allLogs);
+  copyToClipboard(txtContent, "All URLs (TXT) copied to clipboard!");
+}
+
+function copyFilteredCSV() {
+  if (filteredLogs.length === 0) {
+    alert("No filtered data available to copy.");
+    return;
+  }
+  const csvContent = generateCSVString(filteredLogs);
+  copyToClipboard(csvContent, "Filtered data (CSV) copied to clipboard!");
+}
+
+function copyFilteredTXT() {
+  if (filteredLogs.length === 0) {
+    alert("No filtered URLs available to copy.");
+    return;
+  }
+  const txtContent = generateTXTString(filteredLogs);
+  copyToClipboard(txtContent, "Filtered URLs (TXT) copied to clipboard!");
 }
 
 // Resizable Columns Logic
