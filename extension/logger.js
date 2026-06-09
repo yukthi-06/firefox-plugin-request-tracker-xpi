@@ -1,7 +1,7 @@
 // Session Resource Logger - Logger Script
 // Manages the UI, filters, virtualized table rendering, and exports.
 
-const ROW_HEIGHT = 40;
+const ROW_HEIGHT = 28;
 const scrollContainer = document.querySelector('.resizable-table-wrapper');
 const tableBody = document.getElementById('table-body');
 const recordCountEl = document.getElementById('record-count');

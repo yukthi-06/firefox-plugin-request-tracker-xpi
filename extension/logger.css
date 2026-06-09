@@ -9,7 +9,7 @@
   --text-color: #000000;
   --text-muted: #555555;
   --font-stack: Tahoma, "Segoe UI", Arial, sans-serif;
-  --row-height: 24px;
+  --row-height: 28px;
 }
 
 * {
@@ -22,7 +22,7 @@ body {
   font-family: var(--font-stack);
   background-color: var(--bg-main);
   color: var(--text-color);
-  font-size: 11px;
+  font-size: 13px;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -110,7 +110,7 @@ body {
   width: 100%;
   border: 1px solid var(--border-color);
   padding: 3px 6px;
-  font-size: 11px;
+  font-size: 12px;
   outline: none;
   font-family: var(--font-stack);
 }
@@ -130,7 +130,7 @@ body {
 
 .filter-group select {
   border: 1px solid var(--border-color);
-  font-size: 11px;
+  font-size: 12px;
   padding: 1px 3px;
   font-family: var(--font-stack);
 }
@@ -245,7 +245,7 @@ body {
 /* Buttons */
 .btn {
   font-family: var(--font-stack);
-  font-size: 11px;
+  font-size: 12px;
   padding: 2px 8px;
   background-color: var(--bg-header);
   border: 1px solid var(--border-color);
