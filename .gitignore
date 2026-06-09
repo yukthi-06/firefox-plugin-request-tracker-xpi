@@ -5,6 +5,7 @@
 .DS_Store
 /build
 /captures
+output_xpi/
 .externalNativeBuild
 .cxx
 local.properties
