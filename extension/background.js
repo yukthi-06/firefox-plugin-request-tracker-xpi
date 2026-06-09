@@ -4,20 +4,25 @@
 let logs = [];
 let loggerWindowId = null;
 let isOpening = false;
+let trackingActive = false;
 const tabUrls = {};
 
 // Periodic storage persistence variables
 let saveTimeout = null;
 let pendingChanges = false;
 
-// Load existing logs on startup
-browser.storage.local.get("sessionLogs").then((result) => {
+// Load existing logs and tracking state on startup
+browser.storage.local.get(["sessionLogs", "trackingActive"]).then((result) => {
   if (result.sessionLogs && Array.isArray(result.sessionLogs)) {
     logs = result.sessionLogs;
     console.log("Loaded", logs.length, "logs from storage.");
   }
+  if (result.trackingActive !== undefined) {
+    trackingActive = result.trackingActive;
+    console.log("Tracking active state loaded:", trackingActive);
+  }
 }).catch((err) => {
-  console.error("Failed to load logs from local storage:", err);
+  console.error("Failed to load logs/state from local storage:", err);
 });
 
 // Save logs helper
@@ -70,12 +75,20 @@ function createLoggerWindow() {
   });
 }
 
-// Automatically create logger window when extension is launched/reloaded
-createLoggerWindow();
-
-// Listen for action toolbar icon click to reopen or focus the logger window
+// Listen for action toolbar icon click to start tracking and open the logger window
 browser.action.onClicked.addListener(() => {
+  if (!trackingActive) {
+    trackingActive = true;
+    browser.storage.local.set({ trackingActive: true });
+    console.log("Tracking activated by user invoking the extension window.");
+  }
   createLoggerWindow();
+});
+
+// Reset tracking status on a fresh browser startup
+browser.runtime.onStartup.addListener(() => {
+  trackingActive = false;
+  browser.storage.local.set({ trackingActive: false });
 });
 
 // Track when logger window is closed
@@ -120,6 +133,7 @@ function addLogEntry(entry) {
 
 // 1. Page Visit Tracking
 browser.webNavigation.onCompleted.addListener((details) => {
+  if (!trackingActive) return;
   if (details.frameId === 0) {
     browser.tabs.get(details.tabId).then((tab) => {
       const entry = {
@@ -149,6 +163,7 @@ browser.webNavigation.onCompleted.addListener((details) => {
 // 2. Resource Tracking (Successful / Completed requests)
 browser.webRequest.onCompleted.addListener(
   (details) => {
+    if (!trackingActive) return;
     // Exclude extension-specific internal requests to prevent infinite loops/self-logging
     if (details.url.startsWith("moz-extension://") || details.url.startsWith("chrome-extension://")) {
       return;
@@ -202,6 +217,7 @@ browser.webRequest.onCompleted.addListener(
 // 3. Resource Tracking (Failed requests)
 browser.webRequest.onErrorOccurred.addListener(
   (details) => {
+    if (!trackingActive) return;
     if (details.url.startsWith("moz-extension://") || details.url.startsWith("chrome-extension://")) {
       return;
     }
