@@ -1,15 +1,2 @@
-cd visited-page-tracker
-
-================================================
-#first time
------------
-npm install
-
-================================================
-#build XPI file
----------------
-npm run package
-
-================================================
-
-================================================
+run build.bat (on windows) 
+the XPI file is created in "output_xpi" folder
