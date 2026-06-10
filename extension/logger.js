@@ -93,15 +93,24 @@ function handleToggleCapture() {
 function updateTrackingStateUI() {
   const btn = document.getElementById('toggle-capture-btn');
   const indicator = document.querySelector('.pulse-indicator');
+  const statusCircle = document.getElementById('capture-status-indicator');
   
   if (trackingActive) {
     btn.textContent = 'Stop Capture';
     btn.className = 'btn btn-secondary';
     indicator.classList.remove('inactive');
+    if (statusCircle) {
+      statusCircle.classList.remove('stopped');
+      statusCircle.classList.add('active');
+    }
   } else {
     btn.textContent = 'Start Capture';
     btn.className = 'btn btn-primary';
     indicator.classList.add('inactive');
+    if (statusCircle) {
+      statusCircle.classList.remove('active');
+      statusCircle.classList.add('stopped');
+    }
   }
 }
 
