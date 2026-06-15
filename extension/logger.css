@@ -277,8 +277,13 @@ body {
 
 .footer-right {
   display: flex;
+  flex-direction: column;
   gap: 6px;
-  flex-wrap: wrap;
+}
+
+.button-row {
+  display: flex;
+  gap: 6px;
 }
 
 .header-actions {
