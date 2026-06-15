@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Session Resource Logger</title>
   <link rel="stylesheet" href="logger.css">
 </head>
+
 <body class="dark-theme">
 
   <!-- Header Section -->
@@ -135,7 +137,7 @@
         </tbody>
       </table>
     </div>
-    
+
     <!-- Empty state message -->
     <div id="empty-state" class="empty-state">
       <div class="empty-icon">🔍</div>
@@ -150,15 +152,18 @@
       <span id="record-count">0 items loaded</span>
     </div>
     <div class="footer-right">
-      <button id="export-csv-btn" class="btn btn-primary">Export All Data (CSV)</button>
-      <button id="export-txt-btn" class="btn btn-secondary">Export All URLs only(TXT)</button>
-      <button id="copy-all-csv-btn" class="btn btn-secondary">Copy All Data To Clipboard (CSV)</button>
-      <button id="copy-all-txt-btn" class="btn btn-secondary">Copy All URLs To Clipboard (TXT)</button>
-      <button id="copy-filtered-csv-btn" class="btn btn-secondary">Copy Filtered Data To Clipboard (CSV)</button>
-      <button id="copy-filtered-txt-btn" class="btn btn-secondary">Copy Filtered URLs To Clipboard (TXT)</button>
+      <button id="export-csv-btn" class="btn btn-primary">Save All Data (CSV)</button>
+      <button id="export-txt-btn" class="btn btn-secondary">Save All URLs (TXT)</button>
+      <button id="export-filtered-csv-btn" class="btn btn-primary">Save Filtered Data (CSV)</button>
+      <button id="export-filtered-urls-csv-btn" class="btn btn-secondary">Save Filtered URLs (CSV)</button>
+      <button id="copy-all-csv-btn" class="btn btn-secondary">Copy All Data (CSV)</button>
+      <button id="copy-all-txt-btn" class="btn btn-secondary">Copy All URLs (TXT)</button>
+      <button id="copy-filtered-csv-btn" class="btn btn-secondary">Copy Filtered Data (CSV)</button>
+      <button id="copy-filtered-txt-btn" class="btn btn-secondary">Copy Filtered URLs (TXT)</button>
     </div>
   </footer>
 
   <script src="logger.js"></script>
 </body>
+
 </html>

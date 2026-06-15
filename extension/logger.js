@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('clear-btn').addEventListener('click', handleClearLogs);
   document.getElementById('export-csv-btn').addEventListener('click', exportCSV);
   document.getElementById('export-txt-btn').addEventListener('click', exportTXT);
+  document.getElementById('export-filtered-csv-btn').addEventListener('click', exportFilteredCSV);
+  document.getElementById('export-filtered-urls-csv-btn').addEventListener('click', exportFilteredURLsCSV);
   document.getElementById('copy-all-csv-btn').addEventListener('click', copyAllCSV);
   document.getElementById('copy-all-txt-btn').addEventListener('click', copyAllTXT);
   document.getElementById('copy-filtered-csv-btn').addEventListener('click', copyFilteredCSV);
@@ -504,6 +506,60 @@ function exportTXT() {
   const url = URL.createObjectURL(blob);
   
   const filename = `session_urls_${getTimestampFilename()}.txt`;
+  browser.downloads.download({
+    url: url,
+    filename: filename,
+    saveAs: true
+  });
+}
+
+function generateFilteredURLsCSVString(logs) {
+  const urlSet = new Set();
+  for (const log of logs) {
+    if (log.type === 'page') {
+      if (log.url) urlSet.add(log.url);
+    } else {
+      if (log.resourceUrl) urlSet.add(log.resourceUrl);
+    }
+  }
+  const csvRows = [['url']];
+  for (const url of urlSet) {
+    csvRows.push([url]);
+  }
+  return csvRows.map(row => 
+    row.map(val => `"${String(val !== undefined && val !== null ? val : '').replace(/"/g, '""')}"`).join(",")
+  ).join("\n");
+}
+
+function exportFilteredCSV() {
+  if (filteredLogs.length === 0) {
+    alert("No filtered data available to export.");
+    return;
+  }
+
+  const csvContent = generateCSVString(filteredLogs);
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  
+  const filename = `session_log_filtered_${getTimestampFilename()}.csv`;
+  browser.downloads.download({
+    url: url,
+    filename: filename,
+    saveAs: true
+  });
+}
+
+function exportFilteredURLsCSV() {
+  if (filteredLogs.length === 0) {
+    alert("No filtered URLs available to export.");
+    return;
+  }
+
+  const csvContent = generateFilteredURLsCSVString(filteredLogs);
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  
+  const filename = `session_urls_filtered_${getTimestampFilename()}.csv`;
   browser.downloads.download({
     url: url,
     filename: filename,

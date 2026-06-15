@@ -9,12 +9,15 @@ set "OUTPUT_FILE=session-resource-logger_%TS%.xpi"
 
 echo Packaging WebExtension from 'extension' directory into %OUTPUT_FILE% using zip.exe...
 
+:: echo Copying app-icon.png to extension/icons/app-icon.png...
+:: copy /y "app-icon.png" "extension\icons\app-icon.png"
+
 :: Change directory to extension to ensure paths are at root of archive
 cd extension
 zip -r -q "..\output_xpi\%OUTPUT_FILE%" *
 cd ..
 
-if exist "%OUTPUT_FILE%" (
+if exist "..\output_xpi\%OUTPUT_FILE%" (
     echo Successfully built XPI file at: %OUTPUT_FILE%
 ) else (
     echo Error: Failed to create %OUTPUT_FILE%.
